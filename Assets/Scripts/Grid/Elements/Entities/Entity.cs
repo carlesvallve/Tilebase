@@ -30,14 +30,19 @@ public class Entity : MonoBehaviour {
 		this.grid = grid;
 		this.x = x;
 		this.y = y;
-		this.color = color;
-
+		
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
-		img.material.color = color;
+		SetColor(color);
 
 		grid.layers.Set<Entity>(y, x, this);
 
 		LocateAtCoords(x, y);
+	}
+
+
+	public virtual void SetColor (Color color) {
+		this.color = color;
+		img.material.color = color;
 	}
 
 
@@ -57,6 +62,7 @@ public class Entity : MonoBehaviour {
 
 
 	public virtual void MoveToCoords (int x, int y, float duration) {
+		if (CheckForDoors(x, y) != null) { return; }
 		StartCoroutine(MoveToCoordsCoroutine(x, y, duration));
 	}
 
@@ -148,6 +154,20 @@ public class Entity : MonoBehaviour {
 				OnPickupItem.Invoke (item);
 			}
 		}
+	}
+
+
+	public Door CheckForDoors (int x, int y) {
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null && (entity is Door)) {
+			Door door = (Door)entity;
+			if (door.state == DoorStates.Closed) {
+				door.Open();
+				return door;
+			}
+		}
+
+		return null;
 	}
 }
 

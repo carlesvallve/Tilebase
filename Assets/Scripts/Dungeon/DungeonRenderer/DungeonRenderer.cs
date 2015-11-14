@@ -71,11 +71,11 @@ public class DungeonRenderer : MonoBehaviour {
 
 					// create doors
 					if (dtile.id == DungeonTileType.DOORH) {
-						grid.CreateDoor(x, y, DoorTypes.Wood, DoorDirections.Horizontal);
+						grid.CreateDoor(x, y, DoorTypes.Wood, DoorStates.Closed, DoorDirections.Horizontal);
 					}
 
 					if (dtile.id == DungeonTileType.DOORV) {
-						grid.CreateDoor(x, y, DoorTypes.Wood, DoorDirections.Vertical);
+						grid.CreateDoor(x, y, DoorTypes.Wood, DoorStates.Closed, DoorDirections.Vertical);
 					}
 				}
 			}

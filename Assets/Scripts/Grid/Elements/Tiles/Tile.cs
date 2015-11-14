@@ -27,7 +27,7 @@ public class Tile : MonoBehaviour {
 
 		// set tile image
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
-		img.sortingOrder = grid.height - y - 2;
+		img.sortingOrder = grid.height - y - 10;
 
 		img.material.color = color;
 	}

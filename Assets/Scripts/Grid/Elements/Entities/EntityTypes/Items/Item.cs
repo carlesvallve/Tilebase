@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Item : Entity {
 
+	public ItemTypes type { get; set; }
+
 	protected  bool picked = false;
 	protected GameObject sprite;
 	protected ParticleSystem particles;

@@ -157,6 +157,8 @@ public class Grid : MonoBehaviour {
 		Obstacle obstacle = obj.GetComponent<Obstacle>();
 		obstacle.Init(this, x, y, color);
 
+		obstacle.type = type;
+
 		return obstacle;
 	}
 
@@ -169,12 +171,14 @@ public class Grid : MonoBehaviour {
 		obj.name = type.ToString(); //"Item";
 		Item item = obj.GetComponent<Item>();
 		item.Init(this, x, y, Color.white);
+
+		item.type = type;
 		
 		return item;
 	}
 
 
-	public Door CreateDoor (int x, int y, DoorTypes type, DoorDirections direction) {
+	public Door CreateDoor (int x, int y, DoorTypes type, DoorStates state, DoorDirections direction) {
 		Transform parent = this.container.Find("Entities/Doors");
 
 		GameObject obj = GameObject.Instantiate(prefabs.doors[type]);
@@ -183,6 +187,8 @@ public class Grid : MonoBehaviour {
 		Door door = obj.GetComponent<Door>();
 		door.Init(this, x, y, Color.white);
 
+		door.type = type;
+		door.state = state;
 		door.SetDirection(direction);
 		
 		return door;
@@ -197,6 +203,8 @@ public class Grid : MonoBehaviour {
 		obj.name = type.ToString(); //"Player";
 		Player player = obj.GetComponent<Player>();
 		player.Init(this, x, y, Color.white);
+
+		player.type = type;
 
 		return player;
 	}

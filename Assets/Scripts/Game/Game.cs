@@ -8,6 +8,9 @@ using System.Collections.Generic;
 - implement event system
 
 - implement door states (open/closed)
+	- draw horizontal door with verical bevel
+	- figure out how to mask sprites
+	- alternatelly, draw different sprites for open state
 
 - generate dungeon features:
 	- up and down stairs

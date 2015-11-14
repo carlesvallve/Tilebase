@@ -17,7 +17,7 @@ public class Camera2D : MonoBehaviour {
 
 	void LateUpdate () {
 		Zoom();
-		Pan();
+		//Pan();
 		Track();	
 	}
 

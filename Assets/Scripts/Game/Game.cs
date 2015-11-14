@@ -2,6 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/* TODO:
+
+- implement FOV system
+- implement event system
+
+- implement door states (open/closed)
+
+- generate dungeon features:
+	- up and down stairs
+	- monsters
+	- chests
+	- keys
+	- items
+*/
+
 
 public class Game : MonoBehaviour {
 

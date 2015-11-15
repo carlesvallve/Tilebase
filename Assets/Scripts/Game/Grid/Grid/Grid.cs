@@ -274,15 +274,6 @@ public class Grid : MonoBehaviour {
 		int x = player.x;
 		int y = player.y;
 
-		if (!GetTile(x + dx, y + dy).IsWalkable()) { 
-			if (!GetTile(x + dx, y).IsWalkable()) { dx = 0; }
-			if (!GetTile(x, y + dy).IsWalkable()) { dy = 0; }
-			if (dx != 0  && dy != 0) {
-				int r = Random.Range(1, 100);
-				if (r < 50) { dx = 0; } else { dy = 0; }
-			}
-		}
-
 		x += dx;
 		y += dy;
 

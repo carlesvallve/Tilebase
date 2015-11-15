@@ -2,15 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 /* TODO:
 
 - implement FOV system
 - implement event system
-
-- implement door states (open/closed)
-	- draw horizontal door with verical bevel
-	- figure out how to mask sprites
-	- alternatelly, draw different sprites for open state
 
 - generate dungeon features:
 	- up and down stairs
@@ -22,13 +18,15 @@ using System.Collections.Generic;
 
 
 public class Game : MonoBehaviour {
-
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 	private DungeonRenderer dungeonRenderer;
 
 
 	void Start () {
+		Audio audio = Audio.instance;
+		Audio.play("Audio/Bgm/Alone", 0.5f, 1f, true);
+
 		// Get game components
 		grid = GetComponent<Grid>();
 		dungeonRenderer = GetComponent<DungeonRenderer>();
@@ -63,6 +61,8 @@ public class Game : MonoBehaviour {
 
 		// Generate player
 		GeneratePlayer();
+
+		Audio.play("Audio/Sfx/gong", 0.5f, Random.Range(0.5f, 2f));
 	}
 
 
@@ -75,7 +75,7 @@ public class Game : MonoBehaviour {
 			Tile tile = grid.GetTile(x, y);
 			
 			c++;
-			if (c == 100 || (tile != null && tile.IsWalkable())) {
+			if (c == 100 || (tile != null && tile.IsOccupied())) {
 				break;
 			}
 		}

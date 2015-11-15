@@ -34,12 +34,25 @@ public class Tile : MonoBehaviour {
 
 
 	public bool IsWalkable () {
-		// tiles that contain obstacles are always unwalkable
 		Entity entity = grid.GetEntity(x, y);
+
 		if (entity != null) {
-			if (entity is Obstacle) { 
-				return false; 
-			}
+			if (entity is Obstacle) { return false; }
+			if (entity is Player) { return false; }
+		}
+
+		return true;
+	}
+
+
+	public bool IsOccupied () {
+		// tiles that contain any entity are always occupied,
+		// meaning it wont be possible to locate something else in it
+
+		Entity entity = grid.GetEntity(x, y);
+
+		if (entity != null) { 
+			return false;
 		}
 
 		return true;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using WizUtils;
 
 public class Entity : MonoBehaviour {
 
@@ -62,8 +63,47 @@ public class Entity : MonoBehaviour {
 
 
 	public virtual void MoveToCoords (int x, int y, float duration) {
-		if (CheckForDoors(x, y) != null) { return; }
+		// check interactions with next tile
+		Vector2 inc = CheckTileAtCoords(x, y);
+		if (inc == Vector2.zero) { return; }
+
+		// update final coords
+		x = this.x + (int)inc.x;
+		y = this.y + (int)inc.y;
+
+		// move to coords
 		StartCoroutine(MoveToCoordsCoroutine(x, y, duration));
+	}
+
+
+	protected virtual Vector2 CheckTileAtCoords (int x, int y) {
+		int dx = x - this.x;
+		int dy = y - this.y;
+
+		// check obstacles
+		if (!grid.GetTile(this.x + dx, this.y + dy).IsWalkable()) { 
+			if (!grid.GetTile(this.x + dx, this.y).IsWalkable()) { dx = 0; }
+			if (!grid.GetTile(this.x, this.y + dy).IsWalkable()) { dy = 0; }
+			if (dx != 0  && dy != 0) {
+				int r = Random.Range(1, 100);
+				if (r < 50) { dx = 0; } else { dy = 0; }
+			}
+		}
+
+		// check doors
+		x = this.x + dx;
+		y = this.y + dy;
+		Entity entity = grid.GetEntity(x, y);
+		if (entity != null && (entity is Door)) {
+			Door door = (Door)entity;
+			if (door.state == DoorStates.Closed) {
+				door.Open();
+				return new Vector2(0, 0);
+			}
+		}
+
+		// return increments
+		return new Vector2(dx, dy);
 	}
 
 
@@ -114,6 +154,8 @@ public class Entity : MonoBehaviour {
 		if (OnMoveEnded != null) {
 			OnMoveEnded.Invoke ();
 		}
+
+		Audio.play("Audio/Sfx/step", 1f, Random.Range(0.8f, 1.2f));
 	}
 
 
@@ -154,20 +196,6 @@ public class Entity : MonoBehaviour {
 				OnPickupItem.Invoke (item);
 			}
 		}
-	}
-
-
-	public Door CheckForDoors (int x, int y) {
-		Entity entity = grid.GetEntity(x, y);
-		if (entity != null && (entity is Door)) {
-			Door door = (Door)entity;
-			if (door.state == DoorStates.Closed) {
-				door.Open();
-				return door;
-			}
-		}
-
-		return null;
 	}
 }
 

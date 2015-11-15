@@ -19,7 +19,6 @@ using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
 
-	private Navigator navigator;
 	private AudioManager sfx;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
@@ -27,7 +26,6 @@ public class Game : MonoBehaviour {
 
 
 	void Start () {
-		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
 
 		// Get game components

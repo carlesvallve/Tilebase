@@ -24,8 +24,9 @@ public class Game : MonoBehaviour {
 
 
 	void Start () {
+		Navigator navigator = Navigator.instance;
 		Audio audio = Audio.instance;
-		Audio.play("Audio/Bgm/Alone", 0.5f, 1f, true);
+		//Audio.play("Audio/Bgm/Alone", 0.5f, 1f, true);
 
 		// Get game components
 		grid = GetComponent<Grid>();

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using WizUtils;
 
 public class Entity : MonoBehaviour {
 

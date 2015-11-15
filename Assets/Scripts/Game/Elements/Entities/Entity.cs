@@ -5,6 +5,7 @@ public class Entity : MonoBehaviour {
 
 	// properties
 
+	protected AudioManager sfx;
 	protected Grid grid;
 	protected SpriteRenderer img;
 
@@ -27,10 +28,12 @@ public class Entity : MonoBehaviour {
 	
 
 	public virtual void Init (Grid grid, int x, int y, Color color) {
+		sfx = AudioManager.instance;
+
 		this.grid = grid;
 		this.x = x;
 		this.y = y;
-		
+
 		img = transform.Find("Sprite").GetComponent<SpriteRenderer>();
 		SetColor(color);
 
@@ -154,7 +157,7 @@ public class Entity : MonoBehaviour {
 			OnMoveEnded.Invoke ();
 		}
 
-		Audio.play("Audio/Sfx/step", 1f, Random.Range(0.8f, 1.2f));
+		sfx.Play("Audio/Sfx/step", 1f, Random.Range(0.8f, 1.2f));
 	}
 
 

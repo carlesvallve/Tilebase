@@ -18,15 +18,17 @@ using System.Collections.Generic;
 
 
 public class Game : MonoBehaviour {
+
+	private Navigator navigator;
+	private AudioManager sfx;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 	private DungeonRenderer dungeonRenderer;
 
 
 	void Start () {
-		Navigator navigator = Navigator.instance;
-		Audio audio = Audio.instance;
-		//Audio.play("Audio/Bgm/Alone", 0.5f, 1f, true);
+		navigator = Navigator.instance;
+		sfx = AudioManager.instance;
 
 		// Get game components
 		grid = GetComponent<Grid>();
@@ -63,7 +65,7 @@ public class Game : MonoBehaviour {
 		// Generate player
 		GeneratePlayer();
 
-		Audio.play("Audio/Sfx/gong", 0.5f, Random.Range(0.5f, 2f));
+		sfx.Play("Audio/Sfx/gong", 0.5f, Random.Range(0.5f, 2f));
 	}
 
 

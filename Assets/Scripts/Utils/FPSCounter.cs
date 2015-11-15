@@ -32,7 +32,7 @@ public class FpsCounter : MonoSingleton<FpsCounter> {
 
 		// Text
 		textElement.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-		textElement.color = Color.red;
+		textElement.color = Color.yellow;
 		textElement.fontSize = 10;
 		textElement.alignment = TextAnchor.LowerRight;
 

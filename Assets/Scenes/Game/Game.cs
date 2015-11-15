@@ -25,9 +25,16 @@ public class Game : MonoBehaviour {
 	private DungeonRenderer dungeonRenderer;
 
 
-	void Start () {
-		sfx = AudioManager.instance;
+	void Awake () {
+		// Initialize singletons
+		FpsCounter fps = FpsCounter.instance;
+		fps.enabled = true;
 
+		sfx = AudioManager.instance;
+	}
+
+
+	void Start () {
 		// Get game components
 		grid = GetComponent<Grid>();
 		dungeonRenderer = GetComponent<DungeonRenderer>();
@@ -57,7 +64,6 @@ public class Game : MonoBehaviour {
 		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed);
 
 		// Render dungeon on grid
-		
 		dungeonRenderer.Init(dungeonGenerator, grid);
 
 		// Generate player

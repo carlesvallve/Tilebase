@@ -25,6 +25,7 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
                     }
                 }
                 m_Instance.Init();
+                DontDestroyOnLoad(m_Instance.gameObject);
             }
             return m_Instance;
         }

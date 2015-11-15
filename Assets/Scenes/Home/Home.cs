@@ -9,10 +9,7 @@ public class Home : MonoBehaviour {
 
 	void Start () {
 		navigator = Navigator.instance;
-		DontDestroyOnLoad(navigator.gameObject);
-
 		sfx = AudioManager.instance;
-		DontDestroyOnLoad(sfx.gameObject);
 
 		sfx.Play("Audio/Bgm/Alone", 0.5f, 1f, true);
 	}

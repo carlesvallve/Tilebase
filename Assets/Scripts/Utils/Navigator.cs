@@ -12,6 +12,8 @@ public class Navigator : MonoSingleton<Navigator> {
 	private CanvasGroup group;
 	private Image overlay;
 
+	private bool transitioning;
+
 
 	void Awake() {
 		// Container and canvas inside the instanced Navigator
@@ -45,6 +47,11 @@ public class Navigator : MonoSingleton<Navigator> {
 
 
 	private IEnumerator GotoScene(string sceneName, bool fade = true) {
+		if (transitioning) {
+			yield break;
+		}
+
+		transitioning = true;
 
 		if (fade) {
 			yield return StartCoroutine(FadeOut());
@@ -57,6 +64,8 @@ public class Navigator : MonoSingleton<Navigator> {
 		if (fade) {
 			StartCoroutine(FadeIn());
 		}
+
+		transitioning = false;
 	}
 
 

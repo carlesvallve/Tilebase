@@ -21,6 +21,7 @@ public class Game : MonoBehaviour {
 
 	private Navigator navigator;
 	private AudioManager sfx;
+	private Hud hud;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
 	private DungeonRenderer dungeonRenderer;
@@ -40,11 +41,14 @@ public class Game : MonoBehaviour {
 		sfx = AudioManager.instance;
 		sfx.Play("Audio/Bgm/Music/Alone", 0.5f, 1f, true);
 		sfx.Play("Audio/Bgm/Ambient/BonusWind", 1f, 1f, true);
+
+
 	}
 
 
 	void Start () {
 		// Get game components
+		hud = GetComponent<Hud>();
 		grid = GetComponent<Grid>();
 		dungeonGenerator = GetComponent<DungeonGenerator>();
 		dungeonRenderer = GetComponent<DungeonRenderer>();
@@ -110,6 +114,7 @@ public class Game : MonoBehaviour {
 
 		// Arrival feedback
 		print ("Welcome to dungeon level " + currentDungeonLevel + ".");
+		hud.UpdateHeader(currentDungeonLevel);
 		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(1.0f, 2.5f));
 
 		// Initialize game events

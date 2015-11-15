@@ -11,7 +11,7 @@ public class Hud : MonoBehaviour {
 
 	void Awake () {
 		game = GetComponent<Game>();
-		dungeonLevelText = container.Find("Footer/DungeonLevel").GetComponent<Text>();
+		dungeonLevelText = container.Find("Header/DungeonLevel").GetComponent<Text>();
 	}
 
 	
@@ -21,6 +21,6 @@ public class Hud : MonoBehaviour {
 
 
 	public void UpdateHeader (int currentDungeonLevel) {
-		dungeonLevelText.text = "Dungeon " + currentDungeonLevel;
+		dungeonLevelText.text = "Dungeon level" + (currentDungeonLevel + 1);
 	}
 }

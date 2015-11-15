@@ -9,16 +9,11 @@ public class AudioManager : MonoSingleton <AudioManager> {
 
 
 	public void Play(string wav, float volume = 1.0f, bool loop = false) {
-		Play(wav, Vector3.zero, volume, 1.0f, loop);
+		Play(wav, volume, 1.0f, loop);
 	}
 
 
-	public void Play(string wav, float volume, float pitch, bool loop = false) {
-		Play(wav, Vector3.zero, volume, pitch, loop);
-	}
-
-
-	public void Play(string wav, Vector3 pos, float volume = 1.0f, float pitch = 1.0f, bool loop = false) {
+	public void Play(string wav, float volume = 1.0f, float pitch = 1.0f, bool loop = false) {
 		AudioClip clip = Resources.Load(wav) as AudioClip;
 
 		// Log error if clip could not be loaded
@@ -27,16 +22,11 @@ public class AudioManager : MonoSingleton <AudioManager> {
 			return;
 		}
 
-		Play(clip, pos, volume, pitch, loop);
-	}
-
-
-	public void Play(AudioClip clip, float volume = 1.0f, float pitch = 1.0f, bool loop = false) {
-		Play(clip, Vector3.zero, volume, pitch, loop);
-	}
-
-
-	public void Play(AudioClip clip, Vector3 pos, float volume = 1.0f, float pitch = 1.0f, bool loop = false) {
+		// if sound plays in a loop, escape if is already playing
+		if (loop && audioSources.ContainsKey(wav)) {
+				return;
+		} 
+				
 		// Add the audio source component
 		AudioSource source = gameObject.AddComponent<AudioSource>();
 		source.loop = loop;
@@ -55,8 +45,11 @@ public class AudioManager : MonoSingleton <AudioManager> {
 		// Play it
 		source.Play();
 
-		// If is not looping, destroy the source component after the sound has played
-		if (!loop)  {
+		if (loop)  {
+			// if sound is playing in a loop, add it to the audiosources dictionary
+			audioSources.Add(wav, source);
+		} else {
+			// otherwise, destroy the source component after the sound has played
 			Destroy(source, clip.length);
 		}
 	}
@@ -77,6 +70,12 @@ public class AudioManager : MonoSingleton <AudioManager> {
 			// Log error if source could not be removed
 			Debug.LogError("Error while stopping AudioSource --> " + wav);
 		}
+	}
+
+
+	public bool IsPlaying (string wav) {
+		// Note: only sounds playing in a loop are added to the dictionary
+		return audioSources.ContainsKey(wav);
 	}
 
 }

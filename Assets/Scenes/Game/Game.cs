@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
 
+	private Navigator navigator;
 	private AudioManager sfx;
 	private Grid grid;
 	private DungeonGenerator dungeonGenerator;
@@ -30,7 +31,10 @@ public class Game : MonoBehaviour {
 		FpsCounter fps = FpsCounter.instance;
 		fps.enabled = true;
 
+		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
+
+		sfx.Play("Audio/Bgm/Ambient/BonusWind", 1f, 1f, true);
 	}
 
 
@@ -69,7 +73,7 @@ public class Game : MonoBehaviour {
 		// Generate player
 		GeneratePlayer();
 
-		sfx.Play("Audio/Sfx/gong", 0.5f, Random.Range(0.5f, 2f));
+		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(0.5f, 2f));
 	}
 
 
@@ -88,6 +92,11 @@ public class Game : MonoBehaviour {
 		}
 
 		grid.player = grid.CreatePlayer(x, y, PlayerTypes.Player);
+	}
+
+
+	public void Navigate (string sceneName) {
+		navigator.Open("Home");
 	}
 
 

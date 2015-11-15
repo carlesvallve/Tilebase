@@ -28,7 +28,7 @@ public class Door : Entity {
 		// and thats because the update was being called after the sprite is rendered, 
 		// so I had to use the Main Camera OnPreRender event to update the material properties.
 
-		sfx.Play("Audio/Sfx/door-open", 0.4f, 1.5f);
+		sfx.Play("Audio/Sfx/Door/door-open", 0.4f, 1.5f);
 
 		this.state = DoorStates.Open;
 

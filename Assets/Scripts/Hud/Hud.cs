@@ -3,15 +3,15 @@ using System.Collections;
 
 public class Hud : MonoBehaviour {
 
-	private Navigator navigator;
 	
+	private Game game;
 
 	void Awake () {
-		navigator = Navigator.instance;
+		game = GetComponent<Game>();
 	}
 
 	
 	public void ButtonMenu () {
-		navigator.Open("Home");
+		game.Navigate("Home");
 	}
 }

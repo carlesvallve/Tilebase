@@ -157,7 +157,7 @@ public class Entity : MonoBehaviour {
 			OnMoveEnded.Invoke ();
 		}
 
-		sfx.Play("Audio/Sfx/step", 1f, Random.Range(0.8f, 1.2f));
+		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 	}
 
 

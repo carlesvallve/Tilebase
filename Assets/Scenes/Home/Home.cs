@@ -11,7 +11,7 @@ public class Home : MonoBehaviour {
 		navigator = Navigator.instance;
 		sfx = AudioManager.instance;
 
-		sfx.Play("Audio/Bgm/Alone", 0.5f, 1f, true);
+		sfx.Play("Audio/Bgm/Music/Alone", 0.5f, 1f, true);
 	}
 
 	

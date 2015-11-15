@@ -20,12 +20,6 @@ public class Entity : MonoBehaviour {
 	public delegate void ExitLevelHandler(int direction);
 	public event ExitLevelHandler OnExitLevel;
 
-	public delegate void MoveUpdatedHandler();
-	public event MoveUpdatedHandler OnMoveUpdated;
-
-	public delegate void MoveEndedHandler();
-	public event MoveEndedHandler OnMoveEnded;
-
 	public delegate void PickupItemHandler(Item item);
 	public event PickupItemHandler OnPickupItem;
 	
@@ -172,13 +166,6 @@ public class Entity : MonoBehaviour {
 		moving = false;
 		grid.SetEntity(x, y, this);
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
-
-		
-
-		// emit move ended event
-		if (OnMoveEnded != null) {
-			OnMoveEnded.Invoke ();
-		}
 	}
 
 
@@ -192,13 +179,9 @@ public class Entity : MonoBehaviour {
 			// pick collectables
 			PickupItemAtPos(transform.localPosition);
 
-			// update vision...
+			// TODO: update vision...
 
-			// emit event
-			if (OnMoveUpdated != null) {
-				OnMoveUpdated.Invoke ();
-			}
-
+			// update last tile reference
 			lastTile = grid.GetTile(transform.localPosition);
 		}
 

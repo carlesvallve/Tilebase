@@ -36,8 +36,9 @@ public class Game : MonoBehaviour {
 		fps.enabled = true;
 
 		navigator = Navigator.instance;
-		sfx = AudioManager.instance;
 
+		sfx = AudioManager.instance;
+		sfx.Play("Audio/Bgm/Music/Alone", 0.5f, 1f, true);
 		sfx.Play("Audio/Bgm/Ambient/BonusWind", 1f, 1f, true);
 	}
 
@@ -45,16 +46,14 @@ public class Game : MonoBehaviour {
 	void Start () {
 		// Get game components
 		grid = GetComponent<Grid>();
-		dungeonRenderer = GetComponent<DungeonRenderer>();
 		dungeonGenerator = GetComponent<DungeonGenerator>();
-
+		dungeonRenderer = GetComponent<DungeonRenderer>();
+		
 		// initialize grid
 		grid.Init();
 
 		// generate dungeon
 		GenerateDungeon(1);
-
-		
 	}
 
 
@@ -72,8 +71,10 @@ public class Game : MonoBehaviour {
 
 
 	// ===============================================================
-	// Dungeon Level Generation
+	// Dungeon Level Generation 
 	// ===============================================================
+
+	// (TODO: We may want to move this to a new class)
 
 	public void GenerateDungeon (int direction) {
 		// Update current dungeon level
@@ -109,7 +110,7 @@ public class Game : MonoBehaviour {
 
 		// Arrival feedback
 		print ("Welcome to dungeon level " + currentDungeonLevel + ".");
-		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(0.5f, 2f));
+		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(1.0f, 2.5f));
 
 		// Initialize game events
 		InitializeGameEvents();
@@ -170,6 +171,19 @@ public class Game : MonoBehaviour {
 					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
 
 					tile2 = grid.GetTile(tile.x, tile.y + i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+
+					tile2 = grid.GetTile(tile.x - i, tile.y - i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x + i, tile.y - i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x - i, tile.y + i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x + i, tile.y + i);
 					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
 				}
 			}

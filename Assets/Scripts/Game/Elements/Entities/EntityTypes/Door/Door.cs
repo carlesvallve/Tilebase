@@ -24,17 +24,17 @@ public class Door : Entity {
 
 
 	public void Open () {
-		// TODO: in the Update function the animation started flickering, 
+		// TODO: In case we want to animate the mask, 
+		// in the Update function the animation started flickering, 
 		// and thats because the update was being called after the sprite is rendered, 
 		// so I had to use the Main Camera OnPreRender event to update the material properties.
 
-		sfx.Play("Audio/Sfx/Door/door-open2", 1f, Random.Range(0.4f, 0.6f));
-		//sfx.Play("Audio/Sfx/Door/door-open", 0.4f, 1.5f);
-
 		this.state = DoorStates.Open;
+		sfx.Play("Audio/Sfx/Door/door-open2", 1f, Random.Range(0.4f, 0.6f));
 
 		Vector3 dir = GetOpendirection();
 		img.transform.Translate(dir);
+		
 		ResizeSpriteMask(dir);
 	}
 
@@ -87,6 +87,8 @@ public class Door : Entity {
 
 	public void Close () {
 		this.state = DoorStates.Closed;
+		sfx.Play("Audio/Sfx/Door/door-open2", 1f, Random.Range(0.4f, 0.6f));
+
 		img.transform.Translate(-GetOpendirection());
 
 		img.material.SetFloat("_MinX", 0);

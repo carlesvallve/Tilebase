@@ -194,8 +194,6 @@ public class Grid : MonoBehaviour {
 		door.state = state;
 		door.SetDirection(direction);
 
-		
-		
 		return door;
 	}
 
@@ -299,37 +297,5 @@ public class Grid : MonoBehaviour {
 		y += dy;
 
 		player.MoveToCoords(x, y, 0.15f);
-	}
-
-
-	// TODO: Move a single tile N sumber of steps
-	private void SwipeLong (Vector2 delta) {
-		int dx = (int)delta.x;
-		int dy = (int)delta.y;
-		int x = player.x;
-		int y = player.y;
-		int steps = 0;
-
-		Tile tile = GetTile(x, y);
-
-		while (tile != null) {
-			x += dx;
-			y += dy;
-			steps += 1;
-
-			if (x < 0 || y < 0 || x > width - 1 || y > height - 1) {
-				break;
-			}
-
-			tile = GetTile(x, y);
-			if (tile == null) { break; }
-			if (!tile.IsWalkable()) { break; }
-		}
-
-		x-= dx;
-		y-= dy;
-		steps -= 1;
-
-		player.MoveToCoords(x, y, 0.3f * steps);
 	}
 }

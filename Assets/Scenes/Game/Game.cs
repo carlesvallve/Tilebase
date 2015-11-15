@@ -9,7 +9,6 @@ using System.Collections.Generic;
 - implement event system
 
 - generate dungeon features:
-	- up and down stairs
 	- monsters
 	- chests
 	- keys
@@ -41,8 +40,6 @@ public class Game : MonoBehaviour {
 		sfx = AudioManager.instance;
 		sfx.Play("Audio/Bgm/Music/Alone", 0.5f, 1f, true);
 		sfx.Play("Audio/Bgm/Ambient/BonusWind", 1f, 1f, true);
-
-
 	}
 
 
@@ -113,7 +110,8 @@ public class Game : MonoBehaviour {
 		GeneratePlayer(ladder.x, ladder.y - 1);
 
 		// Arrival feedback
-		print ("Welcome to dungeon level " + currentDungeonLevel + ".");
+		//print ("Welcome to dungeon level " + currentDungeonLevel + ".");
+		hud.UpdateLog("Welcome to dungeon level " + currentDungeonLevel + ".");
 		hud.UpdateHeader(currentDungeonLevel);
 		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(1.0f, 2.5f));
 
@@ -215,8 +213,23 @@ public class Game : MonoBehaviour {
 	// ===============================================================
 
 	public void InitializeGameEvents () {
+		grid.player.OnPickupItem += (Item item) => {
+			hud.UpdateLog("You picked up an " + item);
+		};
+
+		grid.player.OnOpenDoor += (Door door) => {
+			hud.UpdateLog("You opened the door.");
+		};
+
 		grid.player.OnExitLevel += (int direction) => {
-			GenerateDungeon (direction); 
+			GenerateDungeon (direction);
+		};
+
+
+		grid.player.OnEndMove += () => {
+			hud.UpdateLog("");
+			// move again if there are queued swipes
+			grid.NextSwipe();
 		};
 	}
 

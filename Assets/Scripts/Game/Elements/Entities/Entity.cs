@@ -17,11 +17,17 @@ public class Entity : MonoBehaviour {
 
 	// events
 
+	public delegate void PickupItemHandler(Item item);
+	public event PickupItemHandler OnPickupItem;
+
+	public delegate void OpenDoorHandler(Door door);
+	public event OpenDoorHandler OnOpenDoor;
+
 	public delegate void ExitLevelHandler(int direction);
 	public event ExitLevelHandler OnExitLevel;
 
-	public delegate void PickupItemHandler(Item item);
-	public event PickupItemHandler OnPickupItem;
+	public delegate void EndMoveHandler();
+	public event EndMoveHandler OnEndMove;
 	
 
 	public virtual void Init (Grid grid, int x, int y, Color color) {
@@ -98,7 +104,7 @@ public class Entity : MonoBehaviour {
 		if (entity != null && (entity is Door)) {
 			Door door = (Door)entity;
 			if (door.state == DoorStates.Closed) {
-				door.Open();
+				OpenDoor(door);
 				return new Vector2(0, 0);
 			}
 		}
@@ -166,6 +172,11 @@ public class Entity : MonoBehaviour {
 		moving = false;
 		grid.SetEntity(x, y, this);
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
+
+		// emit OnEndMove game event
+		if (OnEndMove != null) {
+			OnEndMove.Invoke();
+		}
 	}
 
 
@@ -201,6 +212,15 @@ public class Entity : MonoBehaviour {
 			if (OnPickupItem != null) {
 				OnPickupItem.Invoke (item);
 			}
+		}
+	}
+
+	protected void OpenDoor (Door door) {
+		door.Open();
+
+		// emit OnOpenDoor game event
+		if (OnOpenDoor != null) {
+			OnOpenDoor.Invoke(door);
 		}
 	}
 

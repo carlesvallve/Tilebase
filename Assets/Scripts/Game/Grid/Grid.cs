@@ -8,13 +8,16 @@ using UnityEngine.EventSystems;
 public class Grid : MonoBehaviour {
 
 	// grid props
-	public Player player { get; set; }
 	public GridLayers layers;
 
 	public int width = 7;
 	public int height = 9;
 	public int tileWidth = 30;
 	public int tileHeight = 25;
+
+	public Player player { get; set; }
+	public Ladder ladderUp { get; set; }
+	public Ladder ladderDown { get; set; }
 
 	// interaction
 	private Vector3 swipeStart;
@@ -190,8 +193,26 @@ public class Grid : MonoBehaviour {
 		door.type = type;
 		door.state = state;
 		door.SetDirection(direction);
+
+		
 		
 		return door;
+	}
+
+
+	public Ladder CreateLadder (int x, int y, LadderTypes type, LadderDirections direction) {
+		Transform parent = this.container.Find("Entities/Ladders");
+
+		GameObject obj = GameObject.Instantiate(prefabs.ladders[type]);
+		obj.transform.SetParent(parent, false);
+		obj.name = type.ToString(); //"Item";
+		Ladder ladder = obj.GetComponent<Ladder>();
+		ladder.Init(this, x, y, Color.white);
+
+		ladder.type = type;
+		ladder.SetDirection(direction);
+		
+		return ladder;
 	}
 
 

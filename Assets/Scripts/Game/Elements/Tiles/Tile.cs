@@ -52,9 +52,9 @@ public class Tile : MonoBehaviour {
 		Entity entity = grid.GetEntity(x, y);
 
 		if (entity != null) { 
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 }

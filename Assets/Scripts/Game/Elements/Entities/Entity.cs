@@ -9,12 +9,16 @@ public class Entity : MonoBehaviour {
 	protected Grid grid;
 	protected SpriteRenderer img;
 
+	public int currentDungeonLevel { get; set; }
 	public int x { get; private set; }
 	public int y { get; private set; }
 	public Color color { get; set; }
 	public bool moving { get; private set; }
 
 	// events
+
+	public delegate void ExitLevelHandler(int direction);
+	public event ExitLevelHandler OnExitLevel;
 
 	public delegate void MoveUpdatedHandler();
 	public event MoveUpdatedHandler OnMoveUpdated;
@@ -24,7 +28,6 @@ public class Entity : MonoBehaviour {
 
 	public delegate void PickupItemHandler(Item item);
 	public event PickupItemHandler OnPickupItem;
-
 	
 
 	public virtual void Init (Grid grid, int x, int y, Color color) {
@@ -82,7 +85,7 @@ public class Entity : MonoBehaviour {
 		int dx = x - this.x;
 		int dy = y - this.y;
 
-		// check obstacles
+		// check walkability
 		if (!grid.GetTile(this.x + dx, this.y + dy).IsWalkable()) { 
 			if (!grid.GetTile(this.x + dx, this.y).IsWalkable()) { dx = 0; }
 			if (!grid.GetTile(this.x, this.y + dy).IsWalkable()) { dy = 0; }
@@ -92,10 +95,12 @@ public class Entity : MonoBehaviour {
 			}
 		}
 
-		// check doors
+		// check for entity interaction
 		x = this.x + dx;
 		y = this.y + dy;
 		Entity entity = grid.GetEntity(x, y);
+
+		// check doors
 		if (entity != null && (entity is Door)) {
 			Door door = (Door)entity;
 			if (door.state == DoorStates.Closed) {
@@ -104,6 +109,15 @@ public class Entity : MonoBehaviour {
 			}
 		}
 
+		// check ladders
+		if (dx == 0 && dy == 0) {
+			if (entity != null && (entity is Ladder)) {
+				Ladder ladder = (Ladder)entity;
+				int direction = ladder.direction == LadderDirections.Up ? -1 : 1;
+				StartCoroutine(UseLadder(ladder, direction));
+			}
+		}
+		
 		// return increments
 		return new Vector2(dx, dy);
 	}
@@ -150,14 +164,21 @@ public class Entity : MonoBehaviour {
 
 		yield return null;
 
+		// check interactions with current tile, 
+		//before setting current position entity as the player
+		CheckTileAtCoords(this.x, this.y);
+
+		// stop moving and set current position entoty as the player
 		moving = false;
 		grid.SetEntity(x, y, this);
+		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
+		
+
+		// emit move ended event
 		if (OnMoveEnded != null) {
 			OnMoveEnded.Invoke ();
 		}
-
-		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 	}
 
 
@@ -197,6 +218,43 @@ public class Entity : MonoBehaviour {
 			if (OnPickupItem != null) {
 				OnPickupItem.Invoke (item);
 			}
+		}
+	}
+
+
+	protected IEnumerator UseLadder (Ladder ladder, int direction) {
+		if (currentDungeonLevel == 0 && direction == -1) {
+			print ("The door to the outside world is sealed...");
+			yield break;
+		}
+
+		// fade out
+		StartCoroutine(Navigator.instance.FadeOut(0.5f));
+		 
+		float x = this.x, y = this.y;
+		if (direction == -1) {
+			y += 0.75f;
+		} else {
+			img.sortingOrder = grid.height - this.y - 10;
+			y -= 1.5f;
+		}
+
+		float ratio = grid.tileHeight / (float)grid.tileWidth;
+		Vector3 startPos = new Vector3(this.x, 0.4f + this.y * ratio, 0);
+		Vector3 endPos = new Vector3(x, 0.4f + y * ratio, 0);
+		float duration = 0.5f;
+
+		float t = 0f;
+		while (t <= 1f) {
+			t += Time.deltaTime / duration;
+			transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0, 1, Mathf.SmoothStep(0f, 1f, t)));
+			
+			yield return null;
+		}
+
+		// emit onExitLevel game event
+		if (OnExitLevel != null) {
+			OnExitLevel.Invoke(direction);
 		}
 	}
 }

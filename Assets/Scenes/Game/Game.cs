@@ -26,6 +26,10 @@ public class Game : MonoBehaviour {
 	private DungeonRenderer dungeonRenderer;
 
 
+	private List<int> dungeonSeeds = new List<int>();
+	private int currentDungeonLevel = -1;
+
+
 	void Awake () {
 		// Initialize singletons
 		FpsCounter fps = FpsCounter.instance;
@@ -48,21 +52,47 @@ public class Game : MonoBehaviour {
 		grid.Init();
 
 		// generate dungeon
-		GenerateDungeon();
+		GenerateDungeon(1);
+
+		
 	}
 
 
 	void Update () {
 		if (Input.GetKeyDown("space")) {
-			GenerateDungeon();
+			GenerateDungeon(1);
 		}
 	}
 
 
-	public void GenerateDungeon () {
-		// Generate a new random seed
-		dungeonGenerator.seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
-		Random.seed = dungeonGenerator.seed;
+	public void Navigate (string sceneName) {
+		sfx.Stop("Audio/Bgm/Ambient/BonusWind");
+		navigator.Open("Home");
+	}
+
+
+	// ===============================================================
+	// Dungeon Level Generation
+	// ===============================================================
+
+	public void GenerateDungeon (int direction) {
+		// Update current dungeon level
+		currentDungeonLevel += direction;
+		
+		// Set random seed
+		int seed;
+		if (currentDungeonLevel > dungeonSeeds.Count - 1) {
+			// Set a random seed if we are entering a new dungeon level
+			seed = System.DateTime.Now.Millisecond * 1000 + System.DateTime.Now.Minute * 100;
+			dungeonSeeds.Add(seed);
+		} else {
+			// Recover a previously stored seed on current dungeon level
+			seed = dungeonSeeds[currentDungeonLevel];
+		}
+
+		// Apply random seed
+		dungeonGenerator.seed = seed;
+		Random.seed = seed;
 		
 		// Generate dungeon data
 		dungeonGenerator.GenerateDungeon(dungeonGenerator.seed);
@@ -70,33 +100,105 @@ public class Game : MonoBehaviour {
 		// Render dungeon on grid
 		dungeonRenderer.Init(dungeonGenerator, grid);
 
-		// Generate player
-		GeneratePlayer();
+		// Generate ladders
+		GenerateLadders();
 
+		// Generate player
+		Ladder ladder = direction == 1 ? grid.ladderUp : grid.ladderDown;
+		GeneratePlayer(ladder.x, ladder.y - 1);
+
+		// Arrival feedback
+		print ("Welcome to dungeon level " + currentDungeonLevel + ".");
 		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(0.5f, 2f));
+
+		// Initialize game events
+		InitializeGameEvents();
+
+		// fade in
+		StartCoroutine(Navigator.instance.FadeIn(0.5f));
 	}
 
 
-	private void GeneratePlayer () {
-		int x = 0, y = 0, c = 0;
+	private void GeneratePlayer (int x, int y) {
+		grid.player = grid.CreatePlayer(x, y, PlayerTypes.Player);
+		grid.player.currentDungeonLevel = currentDungeonLevel;
+	}
+
+
+	private void GenerateLadders () {
+		Tile tile = null;
+
+		// locate ladderUp so it has no entities on 1 tile radius
+		tile = GetRandomFreeTile(1);
+		if (tile != null) {
+			grid.ladderUp = grid.CreateLadder(tile.x, tile.y, LadderTypes.Wood, LadderDirections.Up);
+		}
+
+		// locate ladderDown so it has no entities on 1 tile radius
+		tile = GetRandomFreeTile(1);
+		if (tile != null) {
+			grid.ladderDown = grid.CreateLadder(tile.x, tile.y, LadderTypes.Wood, LadderDirections.Down);
+		}
+	}
+
+
+	private Tile GetRandomFreeTile (int radius = 0) {
+		Tile tile = null;
+		Tile tile2 = null;
+		int c = 0;
 
 		while (true) {
-			x = Random.Range(0, grid.width);
-			y = Random.Range(0, grid.height);
-			Tile tile = grid.GetTile(x, y);
+			tile = grid.GetTile(
+				Random.Range(0, grid.width), 
+				Random.Range(0, grid.height)
+			);
+
+			bool ok = false;
+
+			if (tile != null && !tile.IsOccupied()) {
+				ok = true;
+
+				// iterate on all surounding tiles
+				for (int i = 1; i <= radius; i++) {
+					tile2 = grid.GetTile(tile.x - i, tile.y);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x + i, tile.y);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x, tile.y - i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+
+					tile2 = grid.GetTile(tile.x, tile.y + i);
+					if (tile2 == null || (tile2 != null  && tile2.IsOccupied())) { ok = false; }
+				}
+			}
+
+			// escape if tile is placeable
+			if (ok) {
+				break;
+			}
 			
 			c++;
-			if (c == 100 || (tile != null && tile.IsOccupied())) {
+			if (c == 100) {
+				Debug.LogError("Tile could not be placed. Escaping...");
+				tile = null;
 				break;
 			}
 		}
 
-		grid.player = grid.CreatePlayer(x, y, PlayerTypes.Player);
+		return tile;
 	}
 
 
-	public void Navigate (string sceneName) {
-		navigator.Open("Home");
+	// ===============================================================
+	// Game Events
+	// ===============================================================
+
+	public void InitializeGameEvents () {
+		grid.player.OnExitLevel += (int direction) => {
+			GenerateDungeon (direction); 
+		};
 	}
 
 

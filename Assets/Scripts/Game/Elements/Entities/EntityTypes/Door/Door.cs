@@ -3,12 +3,12 @@ using System.Collections;
 
 public class Door : Entity {
 
+	public Sprite spriteH;
+	public Sprite spriteV;
+
 	public DoorTypes type { get; set; }
 	public DoorStates state { get; set; }
 	public DoorDirections direction { get; set; }
-
-	public Sprite spriteH;
-	public Sprite spriteV;
 
 
 	public void SetDirection (DoorDirections direction) {

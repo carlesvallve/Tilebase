@@ -36,8 +36,7 @@ public class Navigator : MonoSingleton<Navigator> {
 		overlay.color = Color;
 		canvas.sortingOrder = SortOrder;
 
-		//GotoScene(Application.loadedLevelName);
-		StartCoroutine(FadeIn());
+		StartCoroutine(FadeIn(Duration));
 	}
 
 
@@ -54,7 +53,7 @@ public class Navigator : MonoSingleton<Navigator> {
 		transitioning = true;
 
 		if (fade) {
-			yield return StartCoroutine(FadeOut());
+			yield return StartCoroutine(FadeOut(Duration));
 		}
 
 		Application.LoadLevel(sceneName);
@@ -64,20 +63,20 @@ public class Navigator : MonoSingleton<Navigator> {
 		transitioning = false;
 
 		if (fade) {
-			StartCoroutine(FadeIn());
+			StartCoroutine(FadeIn(Duration));
 		}
 
 		
 	}
 
 
-	private IEnumerator FadeIn() {
+	public IEnumerator FadeIn(float duration) {
 		group.alpha = 1;
 		group.gameObject.SetActive(true);
 		
 		float elapsedTime = 0;
-		while (elapsedTime < Duration) {
-			float t = elapsedTime / Duration;
+		while (elapsedTime < duration) {
+			float t = elapsedTime / duration;
 			group.alpha = Mathf.Lerp(1, 0, Mathf.SmoothStep(0f, 1f, t)); 
 			elapsedTime += Time.deltaTime;
 			yield return null;
@@ -88,13 +87,13 @@ public class Navigator : MonoSingleton<Navigator> {
 	}
 
 
-	private IEnumerator FadeOut() {
+	public IEnumerator FadeOut(float duration) {
 		group.gameObject.SetActive(true);
 		group.alpha = 0;
 		
 		float elapsedTime = 0;
-		while (elapsedTime < Duration) {
-			float t = elapsedTime / Duration;
+		while (elapsedTime < duration) {
+			float t = elapsedTime / duration;
 			group.alpha = Mathf.Lerp(0, 1, Mathf.SmoothStep(0f, 1f, t)); 
 			elapsedTime += Time.deltaTime;
 			yield return null;

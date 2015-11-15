@@ -61,11 +61,13 @@ public class Navigator : MonoSingleton<Navigator> {
 		
 		yield return null;
 
+		transitioning = false;
+
 		if (fade) {
 			StartCoroutine(FadeIn());
 		}
 
-		transitioning = false;
+		
 	}
 
 

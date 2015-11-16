@@ -90,7 +90,7 @@ public class Grid : MonoBehaviour {
 
 		GameObject obj = (GameObject)Instantiate(prefabs.tiles[type]);
 		obj.transform.SetParent(parent, false);
-		obj.name = type.ToString(); //"Tile " + x + " " + y;
+		obj.name = type.ToString();
 
 		Tile tile = obj.GetComponent<Tile>();
 		tile.Init(this, type, x, y, color);
@@ -171,7 +171,7 @@ public class Grid : MonoBehaviour {
 
 		GameObject obj = GameObject.Instantiate(prefabs.items[type]);
 		obj.transform.SetParent(parent, false);
-		obj.name = type.ToString(); //"Item";
+		obj.name = type.ToString();
 		Item item = obj.GetComponent<Item>();
 		item.Init(this, x, y, Color.white);
 
@@ -186,7 +186,7 @@ public class Grid : MonoBehaviour {
 
 		GameObject obj = GameObject.Instantiate(prefabs.doors[type]);
 		obj.transform.SetParent(parent, false);
-		obj.name = type.ToString(); //"Item";
+		obj.name = type.ToString();
 		Door door = obj.GetComponent<Door>();
 		door.Init(this, x, y, Color.white);
 
@@ -203,7 +203,7 @@ public class Grid : MonoBehaviour {
 
 		GameObject obj = GameObject.Instantiate(prefabs.ladders[type]);
 		obj.transform.SetParent(parent, false);
-		obj.name = type.ToString(); //"Item";
+		obj.name = type.ToString();
 		Ladder ladder = obj.GetComponent<Ladder>();
 		ladder.Init(this, x, y, Color.white);
 
@@ -219,7 +219,7 @@ public class Grid : MonoBehaviour {
 
 		GameObject obj = GameObject.Instantiate(prefabs.players[type]);
 		obj.transform.SetParent(parent, false);
-		obj.name = type.ToString(); //"Player";
+		obj.name = type.ToString();
 		Player player = obj.GetComponent<Player>();
 		player.Init(this, x, y, Color.white);
 

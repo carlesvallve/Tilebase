@@ -17,15 +17,14 @@ public class Entity : MonoBehaviour {
 
 	// events
 
-	public delegate void PickupItemHandler(Item item);
-	public event PickupItemHandler OnPickupItem;
-
-	public delegate void OpenDoorHandler(Door door);
-	public event OpenDoorHandler OnOpenDoor;
+	// dungeon events
+	public delegate void DungeonEscapeHandler();
+	public event DungeonEscapeHandler OnDungeonEscape;
 
 	public delegate void ExitLevelHandler(int direction);
 	public event ExitLevelHandler OnExitLevel;
 
+	// move events
 	public delegate void MoveStartHandler();
 	public event MoveStartHandler OnMoveStart;
 
@@ -34,7 +33,18 @@ public class Entity : MonoBehaviour {
 
 	public delegate void MoveEndHandler();
 	public event MoveEndHandler OnMoveEnd;
+
+	// interaction events
+	public delegate void PickupItemHandler(Item item);
+	public event PickupItemHandler OnPickupItem;
+
+	public delegate void OpenDoorHandler(Door door);
+	public event OpenDoorHandler OnOpenDoor;
 	
+
+	// ===============================================================
+	// Initialization
+	// ===============================================================
 
 	public virtual void Init (Grid grid, int x, int y, Color color) {
 		sfx = AudioManager.instance;
@@ -72,6 +82,10 @@ public class Entity : MonoBehaviour {
 		grid.SetEntity(x, y, this);
 	}
 
+
+	// ===============================================================
+	// Movement
+	// ===============================================================
 
 	public virtual void MoveToCoords (int x, int y, float duration) {
 		// check interactions with next tile
@@ -141,9 +155,11 @@ public class Entity : MonoBehaviour {
 			yield break;
 		}
 
-		grid.SetEntity(this.x, this.y, null);
 		moving = true;
-
+		if (grid.GetEntity(this.x, this.y) == this) {
+			grid.SetEntity(this.x, this.y, null);
+		}
+		
 		Tile startingTile = grid.GetTile(transform.localPosition);
 
 		float ratio = grid.tileHeight / (float)grid.tileWidth;
@@ -181,7 +197,9 @@ public class Entity : MonoBehaviour {
 
 		// stop moving and set current position entoty as the player
 		moving = false;
-		grid.SetEntity(x, y, this);
+		if (grid.GetEntity(this.x, this.y) == null) {
+			grid.SetEntity(x, y, this);
+		}
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
 		// emit OnMoveEnd game event
@@ -216,6 +234,10 @@ public class Entity : MonoBehaviour {
 	}
 
 
+	// ===============================================================
+	// Interaction
+	// ===============================================================
+
 	protected void PickupItemAtPos (Vector3 pos) {
 		Entity entity = grid.GetEntity(pos);
 		if (entity == null) { return; }
@@ -243,7 +265,11 @@ public class Entity : MonoBehaviour {
 
 	protected IEnumerator UseLadder (Ladder ladder, int direction) {
 		if (currentDungeonLevel == 0 && direction == -1) {
-			print ("The door to the outside world is sealed...");
+			grid.SetEntity(this.x, this.y, ladder);
+			// emit onExitLevel game event
+			if (OnDungeonEscape != null) {
+				OnDungeonEscape.Invoke();
+			}
 			yield break;
 		}
 
@@ -270,6 +296,8 @@ public class Entity : MonoBehaviour {
 			
 			yield return null;
 		}
+
+		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
 		// emit onExitLevel game event
 		if (OnExitLevel != null) {

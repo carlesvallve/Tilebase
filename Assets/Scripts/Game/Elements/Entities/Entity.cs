@@ -26,8 +26,14 @@ public class Entity : MonoBehaviour {
 	public delegate void ExitLevelHandler(int direction);
 	public event ExitLevelHandler OnExitLevel;
 
-	public delegate void EndMoveHandler();
-	public event EndMoveHandler OnEndMove;
+	public delegate void MoveStartHandler();
+	public event MoveStartHandler OnMoveStart;
+
+	public delegate void MoveUpdateHandler();
+	public event MoveUpdateHandler OnMoveUpdate;
+
+	public delegate void MoveEndHandler();
+	public event MoveEndHandler OnMoveEnd;
 	
 
 	public virtual void Init (Grid grid, int x, int y, Color color) {
@@ -126,6 +132,11 @@ public class Entity : MonoBehaviour {
 	protected virtual IEnumerator MoveToCoordsCoroutine(int x, int y, float duration) {
 		if (moving) { yield break; }
 
+		// emit OnMoveStart game event
+		if (OnMoveStart != null) {
+			OnMoveStart.Invoke();
+		}
+
 		if (x == this.x && y == this.y) {
 			yield break;
 		}
@@ -173,9 +184,9 @@ public class Entity : MonoBehaviour {
 		grid.SetEntity(x, y, this);
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
-		// emit OnEndMove game event
-		if (OnEndMove != null) {
-			OnEndMove.Invoke();
+		// emit OnMoveEnd game event
+		if (OnMoveEnd != null) {
+			OnMoveEnd.Invoke();
 		}
 	}
 
@@ -191,6 +202,11 @@ public class Entity : MonoBehaviour {
 			PickupItemAtPos(transform.localPosition);
 
 			// TODO: update vision...
+
+			// emit OnMoveUpdate game event
+			if (OnMoveUpdate != null) {
+				OnMoveUpdate.Invoke();
+			}
 
 			// update last tile reference
 			lastTile = grid.GetTile(transform.localPosition);
@@ -232,7 +248,7 @@ public class Entity : MonoBehaviour {
 		}
 
 		// fade out
-		StartCoroutine(Navigator.instance.FadeOut(0.5f));
+		//StartCoroutine(Navigator.instance.FadeOut(1f, 0.25f));
 		 
 		float x = this.x, y = this.y;
 		if (direction == -1) {

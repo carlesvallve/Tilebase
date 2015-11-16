@@ -65,13 +65,13 @@ public class Navigator : MonoSingleton<Navigator> {
 		if (fade) {
 			StartCoroutine(FadeIn(Duration));
 		}
-
-		
 	}
 
 
-	public IEnumerator FadeIn(float duration) {
-		group.alpha = 1;
+	public IEnumerator FadeIn(float duration, float delay = 0) {
+		yield return new WaitForSeconds(delay);
+
+		//group.alpha = 1;
 		group.gameObject.SetActive(true);
 		
 		float elapsedTime = 0;
@@ -87,9 +87,11 @@ public class Navigator : MonoSingleton<Navigator> {
 	}
 
 
-	public IEnumerator FadeOut(float duration) {
+	public IEnumerator FadeOut(float duration, float delay = 0) {
+		yield return new WaitForSeconds(delay);
+
 		group.gameObject.SetActive(true);
-		group.alpha = 0;
+		//group.alpha = 0;
 		
 		float elapsedTime = 0;
 		while (elapsedTime < duration) {

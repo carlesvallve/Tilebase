@@ -9,10 +9,28 @@ using System.Collections.Generic;
 - implement event system
 
 - generate dungeon features:
-	- monsters
-	- chests
-	- keys
-	- items
+	- monsters:
+		- are organized in tribes (6 bugs, 3 goblins, 2 orcs, 1 giant...)
+		- each monster type has a social stat that defines if is more likely to be in group or alone
+		- monsters wont interact with chest, items or ladders for now
+		- visible, memorized, and invisible monsters
+		- memorized monsters will move each time player move
+			- go towards the player
+			- go towards the group
+			- flee
+
+	- chests: 
+		must be in rooms + no obstacles that are not walls around
+	- keys: 
+		anywhere
+	- items: 
+		anywhere
+	
+	- living entities must mantain stats between levels 
+
+	- player inventory:
+		- grid list of items, some are selected, some arent
+		- list of body parts and equipped item
 */
 
 

@@ -146,7 +146,7 @@ public class Entity : MonoBehaviour {
 	protected virtual IEnumerator MoveToCoordsCoroutine(int x, int y, float duration) {
 		if (moving) { yield break; }
 
-		// emit OnMoveStart game event
+		// emit event
 		if (OnMoveStart != null) {
 			OnMoveStart.Invoke();
 		}
@@ -202,7 +202,7 @@ public class Entity : MonoBehaviour {
 		}
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
-		// emit OnMoveEnd game event
+		// emit event
 		if (OnMoveEnd != null) {
 			OnMoveEnd.Invoke();
 		}
@@ -221,7 +221,7 @@ public class Entity : MonoBehaviour {
 
 			// TODO: update vision...
 
-			// emit OnMoveUpdate game event
+			// emit event
 			if (OnMoveUpdate != null) {
 				OnMoveUpdate.Invoke();
 			}
@@ -256,7 +256,7 @@ public class Entity : MonoBehaviour {
 	protected void OpenDoor (Door door) {
 		door.Open();
 
-		// emit OnOpenDoor game event
+		// emit event
 		if (OnOpenDoor != null) {
 			OnOpenDoor.Invoke(door);
 		}
@@ -264,18 +264,18 @@ public class Entity : MonoBehaviour {
 
 
 	protected IEnumerator UseLadder (Ladder ladder, int direction) {
+		// if this is the first dungeon level, escape the dungeon!
 		if (currentDungeonLevel == 0 && direction == -1) {
 			grid.SetEntity(this.x, this.y, ladder);
-			// emit onExitLevel game event
+			
+			// emit event
 			if (OnDungeonEscape != null) {
 				OnDungeonEscape.Invoke();
 			}
 			yield break;
 		}
 
-		// fade out
-		//StartCoroutine(Navigator.instance.FadeOut(1f, 0.25f));
-		 
+		// get final pos
 		float x = this.x, y = this.y;
 		if (direction == -1) {
 			y += 0.75f;
@@ -289,6 +289,7 @@ public class Entity : MonoBehaviour {
 		Vector3 endPos = new Vector3(x, 0.4f + y * ratio, 0);
 		float duration = 0.5f;
 
+		// climb the ladder
 		float t = 0f;
 		while (t <= 1f) {
 			t += Time.deltaTime / duration;
@@ -299,7 +300,7 @@ public class Entity : MonoBehaviour {
 
 		sfx.Play("Audio/Sfx/Step/step", 1f, Random.Range(0.8f, 1.2f));
 
-		// emit onExitLevel game event
+		// emit event
 		if (OnExitLevel != null) {
 			OnExitLevel.Invoke(direction);
 		}

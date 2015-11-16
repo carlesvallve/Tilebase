@@ -6,7 +6,6 @@ using System.Collections.Generic;
 /* TODO:
 
 - implement FOV system
-- implement event system
 
 - generate dungeon features:
 	- monsters:

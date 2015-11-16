@@ -59,8 +59,12 @@ public class Game : MonoBehaviour {
 
 
 	void Update () {
-		if (Input.GetKeyDown("space")) {
-			GenerateDungeon(1);
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			StartCoroutine(ExitLevel(-1));
+		}
+
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			StartCoroutine(ExitLevel(1));
 		}
 	}
 
@@ -74,6 +78,12 @@ public class Game : MonoBehaviour {
 	// ===============================================================
 	// Dungeon Level Generation 
 	// ===============================================================
+
+	private IEnumerator ExitLevel (int direction) {
+		yield return StartCoroutine(Navigator.instance.FadeOut(0.5f));
+		GenerateDungeon(direction);
+		yield return StartCoroutine(Navigator.instance.FadeIn(0.5f));
+	}
 
 	// (TODO: We may want to move this to a new class)
 
@@ -111,15 +121,14 @@ public class Game : MonoBehaviour {
 
 		// Arrival feedback
 		//print ("Welcome to dungeon level " + currentDungeonLevel + ".");
-		hud.UpdateLog("Welcome to dungeon level " + currentDungeonLevel + ".");
+		hud.UpdateLog("Welcome to dungeon level " + (currentDungeonLevel + 1) + ".");
 		hud.UpdateHeader(currentDungeonLevel);
 		sfx.Play("Audio/Sfx/Musical/gong", 0.5f, Random.Range(1.0f, 2.5f));
 
 		// Initialize game events
 		InitializeGameEvents();
 
-		// fade in
-		StartCoroutine(Navigator.instance.FadeIn(0.5f));
+		
 	}
 
 
@@ -222,12 +231,19 @@ public class Game : MonoBehaviour {
 		};
 
 		grid.player.OnExitLevel += (int direction) => {
-			GenerateDungeon (direction);
+			//GenerateDungeon (direction);
+			StartCoroutine(ExitLevel(direction));
 		};
 
-
-		grid.player.OnEndMove += () => {
+		grid.player.OnMoveStart += () => {
 			hud.UpdateLog("");
+		};
+
+		grid.player.OnMoveUpdate += () => {
+			//hud.UpdateLog("");
+		};
+
+		grid.player.OnMoveEnd += () => {
 			// move again if there are queued swipes
 			grid.NextSwipe();
 		};
